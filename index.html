@@ -413,53 +413,72 @@
     }
     .hero-layout {
       display: grid;
-      grid-template-columns: 1fr auto 1fr;
+      grid-template-columns: 1fr minmax(280px, 440px) 1fr;
       align-items: center;
-      gap: 2.5rem;
+      justify-items: center;
+      gap: 2rem;
       width: 100%;
-      max-width: 1300px;
-      padding: 2rem;
+      height: 100%;
+      max-width: 1400px;
+      padding: 0 1.5rem;
       z-index: 2;
+      overflow: hidden;
     }
-    @media (max-width: 768px) {
-      .hero-layout {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
-      }
-      .hero-polaroids-left, .hero-polaroids-right {
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: center;
-        gap: 1rem;
-      }
+    .hero-polaroids-col {
+      height: 100vh;
+      max-height: 100vh;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
     }
-    .hero-polaroids-left,
-    .hero-polaroids-right {
+    .hero-polaroids-track {
       display: flex;
       flex-direction: column;
-      gap: 2.5rem;
+      will-change: transform;
+      animation: heroLoopUp 26s linear infinite;
+    }
+    .hero-track-right {
+      animation-duration: 22s;
+    }
+    @media (hover: hover) {
+      .hero-polaroids-track:hover {
+        animation-play-state: paused;
+      }
+    }
+    .hero-polaroids-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      padding-bottom: 2rem;
       align-items: center;
     }
     .hero-polaroid {
       background: #fff;
-      padding: 14px 14px 54px;
+      padding: 12px 12px 48px;
       box-shadow: 0 10px 32px rgba(0,0,0,0.45), 0 4px 10px rgba(0,0,0,0.2);
-      width: 280px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      width: clamp(210px, 20vw, 270px);
+      transition: transform 0.35s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.35s ease;
+      cursor: pointer;
+      flex-shrink: 0;
     }
     .hero-polaroid:hover {
-      transform: rotate(0deg) scale(1.04) !important;
-      box-shadow: 0 20px 48px rgba(0,0,0,0.55);
+      transform: rotate(0deg) scale(1.05) !important;
+      box-shadow: 0 20px 48px rgba(0,0,0,0.65);
+      z-index: 10;
     }
-    .hero-polaroids-left .hero-polaroid:nth-child(1) { transform: rotate(-3deg); }
-    .hero-polaroids-left .hero-polaroid:nth-child(2) { transform: rotate(2deg); }
-    .hero-polaroids-left .hero-polaroid:nth-child(3) { transform: rotate(-1.5deg); }
-    .hero-polaroids-right .hero-polaroid:nth-child(1) { transform: rotate(3deg); }
-    .hero-polaroids-right .hero-polaroid:nth-child(2) { transform: rotate(-2deg); }
-    .hero-polaroids-right .hero-polaroid:nth-child(3) { transform: rotate(1.5deg); }
+    .hero-polaroids-left .hero-polaroid:nth-child(3n+1) { transform: rotate(-3deg); }
+    .hero-polaroids-left .hero-polaroid:nth-child(3n+2) { transform: rotate(2.5deg); }
+    .hero-polaroids-left .hero-polaroid:nth-child(3n+3) { transform: rotate(-1.5deg); }
+    .hero-polaroids-right .hero-polaroid:nth-child(3n+1) { transform: rotate(3deg); }
+    .hero-polaroids-right .hero-polaroid:nth-child(3n+2) { transform: rotate(-2.5deg); }
+    .hero-polaroids-right .hero-polaroid:nth-child(3n+3) { transform: rotate(1.5deg); }
     .hero-polaroid img {
       width: 100%;
-      height: 230px;
+      height: clamp(160px, 17vw, 220px);
       object-fit: cover;
       display: block;
       filter: sepia(0.2);
@@ -467,11 +486,73 @@
     }
     .hero-polaroid-caption {
       font-family: var(--font-cursive);
-      font-size: 2.0rem;
+      font-size: clamp(1.4rem, 1.8vw, 1.9rem);
       color: #d5238b;
       text-align: center;
       margin-top: 6px;
       line-height: 1.3;
+    }
+    @keyframes heroLoopUp {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(-50%);
+      }
+    }
+    @media (max-width: 768px) {
+      .hero-layout {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        padding: 1.5rem;
+      }
+      .hero-polaroids-left,
+      .hero-polaroids-right {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        height: 100%;
+        width: 130px;
+        opacity: 0.35;
+        z-index: 1;
+        pointer-events: none;
+      }
+      .hero-polaroids-left {
+        left: -15px;
+      }
+      .hero-polaroids-right {
+        right: -15px;
+      }
+      .hero-polaroids-group {
+        gap: 1.2rem;
+        padding-bottom: 1.2rem;
+      }
+      .hero-polaroid {
+        width: 120px;
+        padding: 6px 6px 26px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      }
+      .hero-polaroid img {
+        height: 100px;
+      }
+      .hero-polaroid-caption {
+        font-size: 1.1rem;
+        margin-top: 3px;
+      }
+      .hero-content {
+        position: relative;
+        z-index: 3;
+        background: rgba(107, 26, 26, 0.82);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(212, 160, 58, 0.3);
+        border-radius: 24px;
+        padding: 2rem 1.5rem;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      }
     }
     .hero-content {
       text-align: center;
@@ -877,7 +958,7 @@
     /* ── Reduced motion ── */
     @media (prefers-reduced-motion: reduce) {
       .petal, .diamond, .loading-icon, .cake-emoji-wrap,
-      .flame, .cake-glow, .finale-title, .tap-hint {
+      .flame, .cake-glow, .finale-title, .tap-hint, .hero-polaroids-track {
         animation: none !important;
       }
       .date-digit.visible, .wish-line.visible, .hero-date.visible,
@@ -912,11 +993,11 @@
     <div class="passcode-layout">
       <div class="polaroid-wrap">
         <div class="polaroid">
-          <span class="ribbon">🎀</span>
+          <span class="ribbon">💫</span>
           <!-- REPLACE: Add your favorite photo of the birthday person -->
-          <img src="placeholder.jpg" alt="Birthday person photo">
+          <img src="placeholder.png" alt="Birthday person photo">
         </div>
-        <p class="polaroid-caption" id="polaroid-caption">Happy Birthday, Babe 🎀</p>
+        <p class="polaroid-caption" id="polaroid-caption">Happy Birthday, Arushi 🎀</p>
       </div>
       <div class="passcode-panel">
         <p class="passcode-title">Enter a Passcode</p>
@@ -981,18 +1062,62 @@
     <div class="hero-layout">
 
       <!-- LEFT POLAROIDS -->
-      <div class="hero-polaroids-left">
-        <div class="hero-polaroid">
-          <img src="placeholder-l1.jpg" alt="Memory">
-          <p class="hero-polaroid-caption">Us 🌸</p>
-        </div>
-        <div class="hero-polaroid">
-          <img src="placeholder-l2.jpg" alt="Memory">
-          <p class="hero-polaroid-caption">Always 💕</p>
-        </div>
-        <div class="hero-polaroid">
-          <img src="placeholder-l3.jpg" alt="Memory">
-          <p class="hero-polaroid-caption">Forever ✨</p>
+      <div class="hero-polaroids-col hero-polaroids-left">
+        <div class="hero-polaroids-track hero-track-left">
+          <!-- GROUP 1 -->
+          <div class="hero-polaroids-group">
+            <div class="hero-polaroid">
+              <img src="placeholder-l1.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Us 🌸</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-l2.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Always 💕</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-l3.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Forever ✨</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-l1.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Us 🌸</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-l2.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Always 💕</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-l3.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Forever ✨</p>
+            </div>
+          </div>
+          <!-- GROUP 2 (duplicate for seamless infinite loop) -->
+          <div class="hero-polaroids-group" aria-hidden="true">
+            <div class="hero-polaroid">
+              <img src="placeholder-l1.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Us 🌸</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-l2.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Always 💕</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-l3.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Forever ✨</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-l1.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Us 🌸</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-l2.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Always 💕</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-l3.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Forever ✨</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1005,18 +1130,62 @@
       </div>
 
       <!-- RIGHT POLAROIDS -->
-      <div class="hero-polaroids-right">
-        <div class="hero-polaroid">
-          <img src="placeholder-r1.jpg" alt="Memory">
-          <p class="hero-polaroid-caption">My girl 💖</p>
-        </div>
-        <div class="hero-polaroid">
-          <img src="placeholder-r2.jpg" alt="Memory">
-          <p class="hero-polaroid-caption">You & me 🌹</p>
-        </div>
-        <div class="hero-polaroid">
-          <img src="placeholder-r3.jpg" alt="Memory">
-          <p class="hero-polaroid-caption">Our story 🎀</p>
+      <div class="hero-polaroids-col hero-polaroids-right">
+        <div class="hero-polaroids-track hero-track-right">
+          <!-- GROUP 1 -->
+          <div class="hero-polaroids-group">
+            <div class="hero-polaroid">
+              <img src="placeholder-r1.png" alt="Memory">
+              <p class="hero-polaroid-caption">Gorgeous 💖</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-r2.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Beautiful 🌹</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-r3.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Diva 🎀</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-r1.png" alt="Memory">
+              <p class="hero-polaroid-caption">Gorgeous 💖</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-r2.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Beautiful 🌹</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-r3.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Diva 🎀</p>
+            </div>
+          </div>
+          <!-- GROUP 2 (duplicate for seamless infinite loop) -->
+          <div class="hero-polaroids-group" aria-hidden="true">
+            <div class="hero-polaroid">
+              <img src="placeholder-r1.png" alt="Memory">
+              <p class="hero-polaroid-caption">Gorgeous 💖</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-r2.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Beautiful 🌹</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-r3.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Diva 🎀</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-r1.png" alt="Memory">
+              <p class="hero-polaroid-caption">Gorgeous 💖</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-r2.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Beautiful 🌹</p>
+            </div>
+            <div class="hero-polaroid">
+              <img src="placeholder-r3.jpeg" alt="Memory">
+              <p class="hero-polaroid-caption">Diva 🎀</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1034,27 +1203,33 @@
         <h2>HAPPY Birthday</h2>
         <div class="letter-body">
           <!-- REPLACE WITH YOUR LETTER -->
-          <p>My dearest love,</p>
-          <p>From the moment you walked into my life, everything changed. Every laugh, every late-night conversation, every quiet moment together — they all weave into the beautiful story we're writing side by side.</p>
-          <p>On your special day, I want you to know that you are the most precious gift I've ever received. You light up every room, warm every heart, and make every ordinary day feel extraordinary.</p>
-          <p>Here's to another year of adventures, inside jokes, and love that grows deeper with every sunrise. Happy birthday, my forever person.</p>
+          <p>Diva Arushi,</p>
+          <p>FHappy Birthday, my little champ! 🎂💛
+
+You're growing up so fast, and I couldn't be prouder of the person you're becoming. Smart, funny, a little bit stubborn (in the best way), and always full of surprises. Being your elder brother is one of my favorite things in the world.
+
+I know class 10 can feel like a lot with studies, exams and everyone telling you what to do. But remember, you're capable of far more than you think. Work hard, believe in yourself, and don't forget to enjoy being a kid too. And if you ever need help or a break from it all, I'm just a call away, always.
+
+I hope this year gives you all the happiness, good marks, and big dreams coming true. You deserve every bit of it.
+
+Love you loads, and yes, party and cake are on me. 🍰🎉.</p>
         </div>
         <p class="letter-sign" id="letter-sign">Lovingly, Your Love 🌹</p>
       </div>
       <div class="memories-grid">
         <div class="memory-polaroid">
           <!-- REPLACE: Your favorite memory photo #1 -->
-          <img src="placeholder1.jpg" alt="Memory 1">
+          <img src="placeholder1.jpeg" alt="Memory 1">
           <p class="memory-caption">That perfect day together ☀️</p>
         </div>
         <div class="memory-polaroid">
           <!-- REPLACE: Your favorite memory photo #2 -->
-          <img src="placeholder2.jpg" alt="Memory 2">
+          <img src="placeholder2.jpeg" alt="Memory 2">
           <p class="memory-caption">Laughing until we cried 😂</p>
         </div>
         <div class="memory-polaroid">
           <!-- REPLACE: Your favorite memory photo #3 -->
-          <img src="placeholder3.jpg" alt="Memory 3">
+          <img src="placeholder3.png" alt="Memory 3">
           <p class="memory-caption">My favorite view — you 💕</p>
         </div>
       </div>
@@ -1116,7 +1291,7 @@
           <p class="wish-polaroid-caption">My sunshine ☀️</p>
         </div>
         <div class="wish-polaroid">
-          <img src="placeholder-w2.jpg" alt="Wish memory">
+          <img src="placeholder-w2.png" alt="Wish memory">
           <p class="wish-polaroid-caption">Smile always 😊</p>
         </div>
       </div>
@@ -1160,9 +1335,9 @@
     /* ═══════════════════════════════════════════
        CUSTOMIZE THESE VALUES
        ═══════════════════════════════════════════ */
-    const PASSCODE = "090804";        // Birthday date in DDMMYY format
-    const RECIPIENT_NAME = "Babe";    // Name shown on polaroid
-    const SENDER_NAME = "Your Love";  // Name signing the letter
+    const PASSCODE = "221109";        // Birthday date in DDMMYY format
+    const RECIPIENT_NAME = "Arushi";    // Name shown on polaroid
+    const SENDER_NAME = "Your Brother";  // Name signing the letter
 
     // Parse passcode into display date (DD / MM / YY)
     const BIRTH_DAY = PASSCODE.slice(0, 2);
